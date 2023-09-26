@@ -6,7 +6,10 @@ import {
   Delete,
   Param,
   Post,
+  Session,
   NotFoundException,
+  UseInterceptors,
+  UseGuards,
 } from '@nestjs/common';
 
 import { Serialize } from 'src/interceptors/serialize.interceptor';
@@ -17,9 +20,12 @@ import { LoginUserDto } from './dtos/login-user.dto';
 import { UserDto } from './dtos/user.dto';
 import { UsersService } from './users.service';
 import { AuthService } from './auth.service';
+import { CurerrentUserInterCeptor } from './interceptors/current-user.interceptor';
+import { AuthGuard } from 'src/guards/auth.gaurd';
 
 @Controller('auth')
 @Serialize(UserDto)
+@UseInterceptors(CurerrentUserInterCeptor)
 export class UsersController {
   constructor(
     private userService: UsersService,
@@ -27,18 +33,24 @@ export class UsersController {
   ) {}
 
   @Post('/signUp')
-  async signUp(@Body() body: CreateUserDto) {
+  async signUp(@Session() session: any, @Body() body: CreateUserDto) {
     const user = await this.authService.signUp(body);
     return user;
   }
 
   @Post('/signIn')
-  async signIn(@Body() body: LoginUserDto) {
+  async signIn(@Session() session: any, @Body() body: LoginUserDto) {
     const user = await this.authService.signin(body);
     return user;
   }
 
+  @Post('/signOut')
+  async signOut(@Session() session: any) {
+    session.userId = null;
+  }
+
   @Get('/:id')
+  @UseGuards(AuthGuard)
   async findUser(@Param('id') id: string) {
     const user = this.userService.findOne(parseInt(id));
     if (!user) {
