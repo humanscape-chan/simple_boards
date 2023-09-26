@@ -16,7 +16,7 @@ export class UsersService {
     name: string;
     password: string;
   }) {
-    const user = await this.repo.create({ name, email, password });
+    const user = this.repo.create({ name, email, password });
     return this.repo.save(user);
   }
 
@@ -56,7 +56,7 @@ export class UsersService {
 
   async findOne(id: number) {
     if (!id) return null;
-    return await this.repo.findOne({
+    return this.repo.findOne({
       where: {
         id,
       },
@@ -64,7 +64,7 @@ export class UsersService {
   }
 
   async findOneByEmail(email: string) {
-    return await this.repo.findOne({
+    return this.repo.findOne({
       where: {
         email,
       },
@@ -72,7 +72,7 @@ export class UsersService {
   }
 
   async findAll(ids: number[]) {
-    return await this.repo.find({
+    return this.repo.find({
       where: {
         id: In(ids),
       },
