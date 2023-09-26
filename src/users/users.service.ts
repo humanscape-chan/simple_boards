@@ -62,6 +62,14 @@ export class UsersService {
     });
   }
 
+  async findOneByEmail(email: string) {
+    return await this.repo.findOne({
+      where: {
+        email,
+      },
+    });
+  }
+
   async findAll(ids: number[]) {
     return await this.repo.find({
       where: {
