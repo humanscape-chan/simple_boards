@@ -11,20 +11,26 @@ export class MoviesService {
 
   async create(createMovieDto: CreateMovieDto) {
     const movie = this.repo.create(createMovieDto);
-    return this.repo.save(movie);
+    await this.repo.save(movie);
+    return movie;
   }
 
   async findAll() {
-    return this.repo.find();
+    const movies = await this.repo.find();
+    return movies;
   }
 
   async findOne(id: number) {
     if (!id) return null;
-    return this.repo.findOne({
+    const movie = this.repo.findOne({
       where: {
         id,
       },
     });
+    if (!movie) {
+      throw new Error('movie not found');
+    }
+    return movie;
   }
 
   async update(id: number, updateMovieDto: UpdateMovieDto) {
@@ -36,7 +42,8 @@ export class MoviesService {
     if (!movie) {
       throw new Error('movie not found');
     }
-    return this.repo.save({ ...movie, ...updateMovieDto });
+    await this.repo.save({ ...movie, ...updateMovieDto });
+    return movie;
   }
 
   async remove(id: number) {
@@ -48,6 +55,7 @@ export class MoviesService {
     if (!movie) {
       throw new Error('movie not found');
     }
-    return this.repo.remove(movie);
+    await this.repo.remove(movie);
+    return movie;
   }
 }

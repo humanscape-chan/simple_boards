@@ -17,7 +17,8 @@ export class UsersService {
     password: string;
   }) {
     const user = this.repo.create({ name, email, password });
-    return this.repo.save(user);
+    await this.repo.save(user);
+    return user;
   }
 
   async delete(id: number | null) {
@@ -29,7 +30,8 @@ export class UsersService {
     if (!user) {
       throw new Error('user not found');
     }
-    return this.repo.remove(user);
+    await this.repo.remove(user);
+    return user;
   }
 
   async update(
@@ -51,31 +53,41 @@ export class UsersService {
     user.email = email;
     user.name = name;
     user.password = password;
-    return this.repo.save(user);
+    await this.repo.save(user);
+    return user;
   }
 
   async findOne(id: number) {
     if (!id) return null;
-    return this.repo.findOne({
+    const user = await this.repo.findOne({
       where: {
         id,
       },
     });
+    if (!user) {
+      throw new Error('user not found');
+    }
+    return user;
   }
 
   async findOneByEmail(email: string) {
-    return this.repo.findOne({
+    const user = await this.repo.findOne({
       where: {
         email,
       },
     });
+    if (!user) {
+      throw new Error('user not found');
+    }
+    return user;
   }
 
   async findAll(ids: number[]) {
-    return this.repo.find({
+    const users = await this.repo.find({
       where: {
         id: In(ids),
       },
     });
+    return users;
   }
 }
