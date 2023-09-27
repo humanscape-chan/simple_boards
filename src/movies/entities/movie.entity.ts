@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Review } from 'src/reviews/entities/review.entity';
 
 @Entity()
 export class Movie {
@@ -44,4 +45,7 @@ export class Movie {
     nullable: true,
   })
   genere: string;
+
+  @OneToMany(() => Review, (review) => review.movie)
+  reviews: Review[];
 }
